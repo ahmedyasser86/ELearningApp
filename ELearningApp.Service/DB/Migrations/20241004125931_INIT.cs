@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ELearningApp.Service.Db.Migrations
+namespace ELearningApp.Service.DB.Migrations
 {
     /// <inheritdoc />
     public partial class INIT : Migration
