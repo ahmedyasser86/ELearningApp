@@ -10,7 +10,7 @@ namespace ELearningApp.Core.Models
     public class UserCourse
     {
         public int Id { get; set; }
-        public string? UserId;
+      
         public DateTime EnrollDate { get; set; }
 
         public string ApplicationUserId { get; set; } = string.Empty;

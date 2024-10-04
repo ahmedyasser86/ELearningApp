@@ -1,6 +1,5 @@
 ﻿using ELearningApp.Core.Models;
 using ELearningApp.Service.DB.DataHelper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -36,57 +35,57 @@ namespace ELearningApp.Controllers
             return View(userCourses);
         }
 
-    //    // تسجيل المستخدم في دورة
-    //    [HttpPost]
-    //    [ValidateAntiForgeryToken]
-    //    public async Task<IActionResult> Register(int courseId)
-    //    {
-    //        var user = await _userManager.GetUserAsync(User);
+        //    // تسجيل المستخدم في دورة
+        //    [HttpPost]
+        //    [ValidateAntiForgeryToken]
+        //    public async Task<IActionResult> Register(int courseId)
+        //    {
+        //        var user = await _userManager.GetUserAsync(User);
 
-    //        // Here Check if null..
-    //        string userId = user?.Id;
+        //        // Here Check if null..
+        //        string userId = user?.Id;
 
-    //        //// تحقق إذا كان المستخدم مسجلاً بالفعل في هذه الدورة
-    //        //var userCourses = await userCoursesDataHelper.GetAsync(uc => uc.CourseId == courseId && uc.userId == userId);
-    //        //if (userCourse != null)
-    //        //{
-    //        //    ModelState.AddModelError("", "You are already registered in this course.");
-    //        //    return RedirectToAction(nameof(Index));
-    //        //}
+        //        //// تحقق إذا كان المستخدم مسجلاً بالفعل في هذه الدورة
+        //        //var userCourses = await userCoursesDataHelper.GetAsync(uc => uc.CourseId == courseId && uc.userId == userId);
+        //        //if (userCourse != null)
+        //        //{
+        //        //    ModelState.AddModelError("", "You are already registered in this course.");
+        //        //    return RedirectToAction(nameof(Index));
+        //        //}
 
-    //        // إضافة التسجيل في الدورة
-    //        var userCourse = new UserCourse
-    //        {
-    //            CourseId = courseId,
-    //            UserId = userId,
-    //            EnrollDate = DateTime.Now
-    //        };
+        //        // إضافة التسجيل في الدورة
+        //        var userCourse = new UserCourse
+        //        {
+        //            CourseId = courseId,
+        //            UserId = userId,
+        //            EnrollDate = DateTime.Now
+        //        };
 
-    //        await userCoursesDataHelper.AddAsync(userCourse);
+        //        await userCoursesDataHelper.AddAsync(userCourse);
 
-    //        return RedirectToAction(nameof(Index));
-    //    }
+        //        return RedirectToAction(nameof(Index));
+        //    }
 
-    //    // إلغاء تسجيل المستخدم من دورة
-    //    [HttpPost]
-    //    [ValidateAntiForgeryToken]
-    //    public async Task<IActionResult> Unregister(int courseId)
-    //    {
-    //        //var user = await _userManager.GetUserAsync(User);
+        //    // إلغاء تسجيل المستخدم من دورة
+        //    [HttpPost]
+        //    [ValidateAntiForgeryToken]
+        //    public async Task<IActionResult> Unregister(int courseId)
+        //    {
+        //        //var user = await _userManager.GetUserAsync(User);
 
-    //        //// Here Check if null..
-    //        //string userId = user?.Id;
+        //        //// Here Check if null..
+        //        //string userId = user?.Id;
 
-    //        //// البحث عن التسجيل المراد إلغاؤه
-    //        //var userCourse = await userCoursesDataHelper.GetAsync(uc => uc.CourseId == courseId && GetUserId(uc) == userId);
+        //        //// البحث عن التسجيل المراد إلغاؤه
+        //        //var userCourse = await userCoursesDataHelper.GetAsync(uc => uc.CourseId == courseId && GetUserId(uc) == userId);
 
-    //        //if (userCourse != null)
-    //        //{
-    //        //    await userCoursesDataHelper.DeleteAsync(userCourse);
-    //        //}
+        //        //if (userCourse != null)
+        //        //{
+        //        //    await userCoursesDataHelper.DeleteAsync(userCourse);
+        //        //}
 
-    //        return RedirectToAction(nameof(Index));
-    //    }
+        //        return RedirectToAction(nameof(Index));
+        //    }
 
     }
 }
