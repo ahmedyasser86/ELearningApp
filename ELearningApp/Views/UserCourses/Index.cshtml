@@ -1,0 +1,28 @@
+﻿@model ELearningApp.Core.Assists.PaginatedList<ELearningApp.Core.Models.Course>
+
+@{
+    ViewData["Index"] = "My Registered Courses";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>My Registered Courses</h2>
+
+{
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Course Name</th>
+            <th>Description</th>
+            <th>Instructor</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+}
+    }
+    else
+    {
+<p>You have not registered for any courses yet.</p>
+    }
