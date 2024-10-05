@@ -12,6 +12,7 @@ namespace ELearningApp.Core.Assists
         public int TotalRecords { get; private set; } = count;
         public int PageNumber { get; private set; } = pageNumber;
         public int PageSize { get; private set; } = pageSize;
+        public string SearchQuery { get; private set; }
         public int TotalPages => (int)Math.Ceiling(TotalRecords / (double)PageSize);
 
         public bool HasPreviousPage => PageNumber > 1;
