@@ -3,9 +3,6 @@
 }
 @* @model ELearningApp.Core.Assists.PaginatedList<ELearningApp.Core.Models.Course>
  *@
-@using Microsoft.AspNetCore.Identity
-@inject UserManager<ELearningApp.Core.Models.Course> UserManager
-@inject SignInManager<ELearningApp.Core.Models.Course> SignInManager
 @using ELearningApp.Core.Models; 
 @using ELearningApp.Core.Assists; 
 @model PaginatedList<Course>
@@ -15,7 +12,6 @@
     <h1 class="display-4">Courses List</h1>
     <p>Web apps with ASP.NET Core</a>.</p>
 </div>
-<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
 
 <div class="container">
     <h2>Courses List</h2>

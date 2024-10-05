@@ -35,6 +35,7 @@ void ConfigureServices(WebApplicationBuilder builder)
     // Configure Identity services
     builder.Services.AddDefaultIdentity<ApplicationUser>(options =>
         options.SignIn.RequireConfirmedAccount = false)
+        .AddRoles<IdentityRole>()
         .AddEntityFrameworkStores<ApplicationDbContext>();
 
     // Add MVC controllers with views
@@ -64,6 +65,8 @@ void ConfigureMiddleware(WebApplication app)
 
     // Configure routing
     app.UseRouting();
+
+    app.UseAuthentication();
     app.UseAuthorization();
 
     // Define the default route
