@@ -1,10 +1,63 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-
 @model ELearningApp.Core.Assists.PaginatedList<ELearningApp.Core.Models.Course>
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+    <h1 class="display-4">Courses List</h1>
+    <p>Web apps with ASP.NET Core</a>.</p>
 </div>
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container">
+    <h2>Courses List</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Category</th>
+                <th>Instructor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var course in Model.Items)
+            {
+                <tr>
+                    <td>@course.Title</td>
+                    <td>@course.Description</td>
+                    <td>@course.Category.Name</td>
+                    <td>@course.Instructor.UserName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <!-- Pagination Controls -->
+    <nav>
+        <ul class="pagination">
+            @if (Model.PageNumber > 1)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber - 1 })">Previous</a>
+                </li>
+            }
+
+            <li class="page-item">
+                <span class="page-link">Page @(Model.PageNumber) of @(Model.TotalPages)</span>
+            </li>
+
+            @if (Model.PageNumber < Model.TotalPages)
+            {
+                <li class="page-item">
+                    <a class="page-link" href="@Url.Action("Index", new { page = Model.PageNumber + 1 })">Next</a>
+                </li>
+            }
+        </ul>
+    </nav>
+</div>
+
+
+@* <div>
+    Page @(Model.PageNumber) of @(Model.TotalPages)
+</div> *@
