@@ -1,7 +1,15 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
 }
-@model ELearningApp.Core.Assists.PaginatedList<ELearningApp.Core.Models.Course>
+@* @model ELearningApp.Core.Assists.PaginatedList<ELearningApp.Core.Models.Course>
+ *@
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ELearningApp.Core.Models.Course> UserManager
+@inject SignInManager<ELearningApp.Core.Models.Course> SignInManager
+@using ELearningApp.Core.Models; 
+@using ELearningApp.Core.Assists; 
+@model PaginatedList<Course>
+
 
 <div class="text-center">
     <h1 class="display-4">Courses List</h1>

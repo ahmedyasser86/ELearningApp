@@ -1,4 +1,9 @@
-﻿@model ELearningApp.Core.Assists.PaginatedList<ELearningApp.Core.Models.Course>
+﻿@using Microsoft.AspNetCore.Identity
+@inject UserManager<ELearningApp.Core.Models.Course> UserManager
+@inject SignInManager<ELearningApp.Core.Models.Course> SignInManager
+@using ELearningApp.Core.Models;
+@* @using ELearningApp.Core.Assists;
+@model PaginatedList<Course> *@
 
 @{
     ViewData["Index"] = "My Registered Courses";
@@ -8,16 +13,39 @@
 <h2>My Registered Courses</h2>
 
 
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Course Name</th>
-            <th>Description</th>
-            <th>Instructor</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-    </tbody>
-</table>
+<<div class="container">
+    <h1 class="my-4">Courses</h1>
 
+    @if (SignInManager.IsSignedIn(User))
+    {
+        var user = await UserManager.GetUserAsync(User);
+        var roles = await UserManager.GetRolesAsync(user);
+
+        // تحقق إذا كان المستخدم معلمًا أو مشرفًا
+        if (roles.Contains("Teacher") || roles.Contains("Admin"))
+        {
+            <a href="@Url.Action("AddCourse", "Courses")" class="btn btn-primary mb-3">Add New Course</a>
+        }
+    }
+
+    <div class="row">
+        @if (Model.C != null && Model.Courses.Count > 0)
+        {
+            foreach (var course in Model.Courses)
+            {
+                <div class="col-lg-4 col-md-6 mb-4">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h4 class="card-title">@course.Title</h4>
+                            <p class="card-text">@course.Description</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <p>No courses available.</p>
+        }
+    </div>
+</div>
