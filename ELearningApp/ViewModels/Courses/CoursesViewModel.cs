@@ -8,5 +8,8 @@ namespace ELearningApp.ViewModels.Courses
         public List<Category> Categories { get; set; } = [];
 
         public PaginatedList<Course>? Courses { get; set; }
+
+        public int? CategoryId { get; set; }
+        public string? Search { get; set; }
     }
 }

@@ -21,5 +21,7 @@ namespace ELearningApp.Core.Models
         public Course? Course { get; set; }
 
         public Quiz? Quiz { get; set; }
+
+        public virtual ICollection<UserProgress>? UserProgresses { get; set; }
     }
 }
