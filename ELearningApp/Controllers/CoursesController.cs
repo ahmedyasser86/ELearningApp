@@ -109,8 +109,19 @@ namespace ELearningApp.Controllers
             {
                 try
                 {
+                    // get user
+                    var user = await userManager.GetUserAsync(User);
+
+                    if(user == null)
+                    {
+                        return RedirectToAction("Index", new { error = "You have no premissions " });
+                    }
+
                     if (course.Id == 0)
                     {
+                        // Add instructor to course
+                        course.InstructorId = user.Id;
+
                         // New Course
                         await coursesDataHelper.AddAsync(course);
                     }
@@ -122,13 +133,12 @@ namespace ELearningApp.Controllers
                             m => m.Include(m => m.Contents));
 
                         // Check if course exist
-                        if (course == null)
+                        if (oldCourse == null)
                         {
                             return RedirectToAction("Index", new { error = "Course not found" });
                         }
 
                         // Check if the loged in user is the instructor
-                        var user = await userManager.GetUserAsync(User);
                         if (user?.Id != oldCourse.InstructorId)
                         {
                             return RedirectToAction("Index", new { error = "You have no premission to edit this course " });
