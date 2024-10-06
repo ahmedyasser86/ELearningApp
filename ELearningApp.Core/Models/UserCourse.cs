@@ -19,14 +19,14 @@ namespace ELearningApp.Core.Models
         public int CourseId { get; set; }
         public virtual Course? Course { get; set; }
 
+        public List<UserProgress>? Progresses { get; set; }
+
         [NotMapped]
         public double Progress
         {
             get
             {
-                return ApplicationUser?.Progresses == null ? 0 
-                    : ApplicationUser.Progresses
-                    .Sum(m => m.Content == null ? 0 : m.Content.Duration);
+                return Progresses == null ? 0 : Progresses.Sum(m => m.Content?.Duration ?? 0);
             }
         }
     }

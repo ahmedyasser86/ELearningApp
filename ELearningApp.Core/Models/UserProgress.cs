@@ -10,8 +10,8 @@ namespace ELearningApp.Core.Models
     {
         public int Id { get; set; }
 
-        public string ApplicationUserId { get; set; } = string.Empty;
-        public virtual ApplicationUser? ApplicationUser { get; set; }
+        public int UserCourseId { get; set; }
+        public UserCourse? UserCourse { get; set; }
 
         public int ContentId { get; set; }
         public virtual Content? Content { get; set; }

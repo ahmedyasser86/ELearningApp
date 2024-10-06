@@ -1,99 +1,185 @@
 ﻿using ELearningApp.Core.Models;
 using ELearningApp.Service.DB.DataHelper;
+using ELearningApp.ViewModels.Contents;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore.Metadata.Conventions;
 
 namespace ELearningApp.Controllers
 {
-    [Authorize(Roles = "Admin, Teacher")]
-    public class UserCoursesController : Controller
+    [Authorize]
+    public class UserCoursesController(IDataHelper<UserCourse> coursesDataHelper, 
+        IDataHelper<UserProgress> userProgressDataHelper,
+        UserManager<ApplicationUser> userManager,
+        IDataHelper<Content> contentDataHlper, 
+        IDataHelper<Course> courseDataHelper) : Controller
     {
-        private readonly IDataHelper<Course> _coursesDataHelper;
-        private readonly IDataHelper<Content> _contentDataHelper;
-
-        public UserCoursesController(IDataHelper<Course> coursesDataHelper, IDataHelper<Content> contentDataHelper)
-        {
-            _coursesDataHelper = coursesDataHelper;
-            _contentDataHelper = contentDataHelper;
-        }
+        private readonly IDataHelper<UserCourse> userCoursesDataHelper = coursesDataHelper;
+        private readonly IDataHelper<UserProgress> userProgressDataHelper = userProgressDataHelper;
+        private readonly IDataHelper<Content> contentDataHlper = contentDataHlper;
+        private readonly IDataHelper<Course> courseDataHelper = courseDataHelper;
+        private readonly UserManager<ApplicationUser> userManager = userManager;
 
         // Index: عرض الدورات الخاصة بالمستخدم
         public async Task<ActionResult> Index(int page = 1, int pageSize = 10)
         {
-            var courses = await _coursesDataHelper.GetPagedAsync(page, pageSize);
-            return View(courses);
+            // Get Loged in User Id
+            var userId = userManager.GetUserId(User);
+
+            var userCourses = await userCoursesDataHelper.SearchPagedWithIncludesAsync(
+                page, pageSize,
+                m => m.ApplicationUserId == userId, // Search by User Id
+                m => m.Include(m => m.Course) // Include Course data to get name, instructor name, category etc
+                .ThenInclude(m => ((Course)m).Instructor) // to get instructor data like Name
+                .Include(m => m.Course).ThenInclude(m => ((Course)m).Category) // to get categoryName
+                .Include(m => m.Course).ThenInclude(m => ((Course)m).Contents) // to get course contents
+                .Include(m => m.Progress) // To get user progress
+                );
+
+            return View(userCourses);
         }
 
-        // عرض تفاصيل دورة معينة
-        public async Task<ActionResult> Details(int id)
+        public async Task<ActionResult> Watch(int courseId, int? contentId = null)
         {
-            var course = await _coursesDataHelper.GetByIdAsync(id.ToString());
+            // Get user Id
+            var userId = userManager.GetUserId(User);
 
-            if (course == null)
+            // Get userCourse
+            var userCourse = (await userCoursesDataHelper.SearchPagedWithIncludesAsync(
+                1, 1,
+                m => m.ApplicationUserId == userId && m.CourseId == courseId,
+                m => m.Include(m => m.Course).ThenInclude(m => ((Course)m).Contents) // to get course contents
+                .Include(m => m.Progress).ThenInclude(m => ((UserProgress)m).Content) // To get user progress
+                )).Items.FirstOrDefault();
+
+            if(userCourse == null)
             {
-                return RedirectToAction("Index", new { error = "Course not found" });
+                return RedirectToAction("Index", new { error = "Somthing error Happend" });
             }
 
-            return View(course);
-        }
-
-        // إضافة دورة جديدة
-        public ActionResult Add()
-        {
-
-            return View("CourseForm", new Course());
-        }
-
-        // تعديل دورة موجودة
-        public async Task<ActionResult> Edit(int id)
-        {
-            var course = await _coursesDataHelper.GetByIdAsync(id.ToString());
-
-            if (course == null)
+            Content? content;
+            if(contentId == null)
             {
-                return RedirectToAction("Index", new { error = "Course not found" });
+                // Get the next content
+                var maxWatchedContentOrder = userCourse.Progresses?.Max(m => m.Content?.OrderNumber);
+
+                // Get nex content
+                content = userCourse.Course?.Contents?.Where(m => m.OrderNumber > maxWatchedContentOrder)
+                    .OrderBy(m => m.OrderNumber).FirstOrDefault();
+            }
+            else
+            {
+                content = userCourse.Course?.Contents?.FirstOrDefault(m => m.Id == contentId);
+            }
+            
+            // Check if content is null
+            if (content == null)
+            {
+                // That's mean that the user watched all content or there is no content yet
+                // Load the first content
+                content = userCourse.Course?.Contents?.OrderBy(m => m.OrderNumber).FirstOrDefault();
+
+                if (content == null)
+                    return RedirectToAction("Index", new { error = "Somthing error Happend" });
             }
 
-            return View("CourseForm", course);
-        }
-
-        // حفظ البيانات (إضافة أو تعديل)
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Save(Course course)
-        {
-            if (ModelState.IsValid)
+            var viewModel = new ContentViewModel
             {
-                if (course.Id == 0)
-                {
-                    // إضافة دورة جديدة
-                    await _coursesDataHelper.AddAsync(course);
-                }
-                else
-                {
-                    // تعديل دورة موجودة
-                    await _coursesDataHelper.UpdateAsync(course);
-                }
+                Content = content,
+                Contents = userCourse.Course?.Contents?.OrderBy(m => m.OrderNumber).ToList(),
+                NextContentId = userCourse.Course?.Contents?.Where(m => m.OrderNumber > content.OrderNumber)
+                    .OrderBy(m => m.OrderNumber).FirstOrDefault()?.Id,
+                PreviousContentId = userCourse.Course?.Contents?.Where(m => m.OrderNumber < content.OrderNumber)
+                    .OrderByDescending(m => m.OrderNumber).FirstOrDefault()?.Id,
+            };
 
-                return RedirectToAction("Index", new { success = "Course saved successfully!" });
-            }
-
-            return View("CourseForm", course);
+            return View(viewModel);
         }
 
-        // حذف دورة
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> MarkAsWatched(int contentId, int userCourseId)
         {
             try
             {
-                var course = await _coursesDataHelper.GetByIdAsync(id.ToString());
+                // Get Content Course Id
+                var content = await contentDataHlper.GetWithIncludesAsync(contentId.ToString(), m => m.Include(m => m.Course).ThenInclude(m => ((Course)m).Students));
+
+                // Get User Id
+                var userId = userManager.GetUserId(User);
+
+                // Check if user is null or not in student list
+                if (userId == null || userCourseId == 0 || content?.Course?.Students == null || !content.Course.Students.Any(m => m.ApplicationUserId == userId))
+                {
+                    return Json("Failed");
+                }
+
+                // Add New Progress
+                await userProgressDataHelper.AddAsync(new UserProgress
+                {
+                    UserCourseId = userCourseId,
+                    ContentId = contentId,
+                });
+
+                return Json("Done");
+            }
+            catch (Exception)
+            {
+                return Json("Failed");
+            }
+        }
+
+        // إضافة دورة جديدة
+        public async Task<ActionResult> Enroll(int courseId)
+        {
+            try
+            {
+                // get user Id
+                var userId = userManager.GetUserId(User);
+
+                // check if course exist
+                var course = await courseDataHelper.GetByIdAsync(courseId.ToString());
+
+                if (userId == null || course == null)
+                {
+                    throw new Exception();
+                }
+
+                // check if user already enrolled
+                var userCourse = await userCoursesDataHelper.SearchAsync(m => m.ApplicationUserId == userId && m.CourseId == courseId);
+                if (userCourse.Any())
+                {
+                    return RedirectToAction($"Watch?courseId={courseId}");
+                }
+
+                // Enroll
+                await userCoursesDataHelper.AddAsync(new UserCourse
+                {
+                    ApplicationUserId = userId,
+                    CourseId = courseId,
+                    EnrollDate = DateTime.Now,
+                });
+
+                return RedirectToAction($"Watch?courseId={courseId}");
+            }
+            catch (Exception)
+            {
+                return RedirectToAction("Index", new { error = "Something error happend" });
+            }
+        }
+
+        // حذف دورة
+        public async Task<ActionResult> UnEnroll(int userCourseId)
+        {
+            try
+            {
+                var course = await userCoursesDataHelper.GetByIdAsync(userCourseId.ToString());
 
                 if (course == null)
                 {
                     return RedirectToAction("Index", new { error = "Course not found" });
                 }
 
-                await _coursesDataHelper.DeleteAsync(id.ToString());
+                await userCoursesDataHelper.DeleteAsync(userCourseId.ToString());
 
                 return RedirectToAction("Index", new { success = "Course deleted successfully!" });
             }
@@ -101,55 +187,6 @@ namespace ELearningApp.Controllers
             {
                 return RedirectToAction("Index", new { error = ex.Message });
             }
-        }
-
-        // إضافة محتوى لدورة معينة
-        public async Task<ActionResult> AddContent(int courseId)
-        {
-            var course = await _coursesDataHelper.GetByIdAsync(courseId.ToString());
-
-            if (course == null)
-            {
-                return RedirectToAction("Index", new { error = "Course not found" });
-            }
-
-            var content = new Content { CourseId = courseId };
-            return View("ContentForm", content);
-        }
-
-        // تعديل محتوى موجود لدورة
-        public async Task<ActionResult> EditContent(int contentId)
-        {
-            var content = await _contentDataHelper.GetByIdAsync(contentId.ToString());
-
-            if (content == null)
-            {
-                return RedirectToAction("Index", new { error = "Content not found" });
-            }
-
-            return View("ContentForm", content);
-        }
-
-        // حفظ محتوى (إضافة أو تعديل)
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SaveContent(Content content)
-        {
-            if (ModelState.IsValid)
-            {
-                if (content.Id == 0)
-                {
-                    await _contentDataHelper.AddAsync(content);
-                }
-                else
-                {
-                    await _contentDataHelper.UpdateAsync(content);
-                }
-
-                return RedirectToAction("Details", new { id = content.CourseId, success = "Content saved successfully!" });
-            }
-
-            return View("ContentForm", content);
         }
     }
 }

@@ -101,7 +101,7 @@ namespace ELearningApp.Service.DB.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("ELearningApp.Core.Models.Content", b =>
@@ -138,7 +138,7 @@ namespace ELearningApp.Service.DB.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("Contents");
+                    b.ToTable("Contents", (string)null);
                 });
 
             modelBuilder.Entity("ELearningApp.Core.Models.Course", b =>
@@ -173,7 +173,7 @@ namespace ELearningApp.Service.DB.Migrations
 
                     b.HasIndex("InstructorId");
 
-                    b.ToTable("Courses");
+                    b.ToTable("Courses", (string)null);
                 });
 
             modelBuilder.Entity("ELearningApp.Core.Models.Quiz", b =>
@@ -196,7 +196,7 @@ namespace ELearningApp.Service.DB.Migrations
                     b.HasIndex("ContentId")
                         .IsUnique();
 
-                    b.ToTable("Quizzes");
+                    b.ToTable("Quizzes", (string)null);
                 });
 
             modelBuilder.Entity("ELearningApp.Core.Models.QuizQuestion", b =>
@@ -221,7 +221,7 @@ namespace ELearningApp.Service.DB.Migrations
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("QuizQuestion");
+                    b.ToTable("QuizQuestion", (string)null);
                 });
 
             modelBuilder.Entity("ELearningApp.Core.Models.QuizQuestionChoice", b =>
@@ -246,7 +246,7 @@ namespace ELearningApp.Service.DB.Migrations
 
                     b.HasIndex("QuizQuestionId");
 
-                    b.ToTable("QuizQuestionChoice");
+                    b.ToTable("QuizQuestionChoice", (string)null);
                 });
 
             modelBuilder.Entity("ELearningApp.Core.Models.UserCourse", b =>
@@ -273,7 +273,7 @@ namespace ELearningApp.Service.DB.Migrations
 
                     b.HasIndex("CourseId");
 
-                    b.ToTable("UserCourses");
+                    b.ToTable("UserCourses", (string)null);
                 });
 
             modelBuilder.Entity("ELearningApp.Core.Models.UserProgress", b =>
@@ -297,7 +297,7 @@ namespace ELearningApp.Service.DB.Migrations
 
                     b.HasIndex("ContentId");
 
-                    b.ToTable("UserProgresses");
+                    b.ToTable("UserProgresses", (string)null);
                 });
 
             modelBuilder.Entity("ELearningApp.Core.Models.UserQuiz", b =>
@@ -330,7 +330,7 @@ namespace ELearningApp.Service.DB.Migrations
 
                     b.HasIndex("QuizId");
 
-                    b.ToTable("UserQuizzes");
+                    b.ToTable("UserQuizzes", (string)null);
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

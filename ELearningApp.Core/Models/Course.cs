@@ -22,6 +22,7 @@ namespace ELearningApp.Core.Models
         public ApplicationUser? Instructor { get; set; }
 
         public ICollection<Content>? Contents { get; set; }
+        public ICollection<UserCourse>? Students { get; set; }
 
         [NotMapped]
         public double Duration
