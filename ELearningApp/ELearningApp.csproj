@@ -34,11 +34,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="wwwroot\JS\" />
-    <Folder Include="wwwroot\lib\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="wwwroot\scss\bootstrap\scss\bootstrap-grid.scss" />
     <None Include="wwwroot\scss\bootstrap\scss\bootstrap-reboot.scss" />
     <None Include="wwwroot\scss\bootstrap\scss\bootstrap.scss" />

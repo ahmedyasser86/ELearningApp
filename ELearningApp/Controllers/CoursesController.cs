@@ -22,7 +22,7 @@ namespace ELearningApp.Controllers
         public readonly IDataHelper<Category> categoriesDataHelper = categoriesDataHelper;
         private readonly UserManager<ApplicationUser> userManager = userManager;
 
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 10, int? categoryId = null, string? search = null)
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 16, int? categoryId = null, string? search = null)
         {
             PaginatedList<Course> courses = await coursesDataHelper
                 .SearchPagedWithIncludesAsync(

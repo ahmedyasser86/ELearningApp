@@ -13,5 +13,10 @@ namespace ELearningApp.Controllers
         {
             return Json("");
         }
+
+        public async Task<ActionResult> GetCourses()
+        {
+            return Json("");
+        }
     }
 }
