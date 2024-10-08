@@ -13,7 +13,5 @@ namespace ELearningApp.Core.Models
         public virtual ICollection<Course>? CoursesAsInstructor  { get; set; }
 
         public virtual ICollection<UserCourse>? Courses { get; set; }
-
-        public virtual ICollection<UserProgress>? Progresses { get; set; }
     }
 }
