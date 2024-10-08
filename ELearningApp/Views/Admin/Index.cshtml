@@ -3,7 +3,7 @@
 }
 @using ELearningApp.Core.Assists
 @using ELearningApp.Core.Models
-@model List<ApplicationUser>
+@model PaginatedList<ApplicationUser>
 
 
 <div class="container mt-4">
@@ -21,7 +21,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in Model)
+            @foreach (var user in Model.Items)
             {
                 <tr>
                     <td>@user.Id</td>
@@ -29,7 +29,7 @@
                     <td>@user.Email</td>
                     <td>
                         <a href="@Url.Action("Edit", new { id = user.Id })" class="btn btn-sm btn-info">Edit</a>
-                        <a href="@Url.Action("ManageRoles", new { id = user.Id })" class="btn btn-sm btn-warning">Manage Roles</a>
+                        <a href="@Url.Action("MakeAdmin", new { id = user.Id })" class="btn btn-sm btn-warning">Manage Roles</a>
                         <form method="post" asp-action="Delete" asp-route-id="@user.Id" style="display: inline;">
                             <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
                         </form>
