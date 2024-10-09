@@ -14,6 +14,7 @@ namespace ELearningApp.Core.Models
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
         public CourseStatus Status { get; set; }
+        public string? ImagePath { get; set; }
 
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
