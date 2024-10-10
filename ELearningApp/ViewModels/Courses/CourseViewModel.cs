@@ -6,7 +6,6 @@ namespace ELearningApp.ViewModels.Courses
     {
         public Course? Course { get; set; }
         public List<Category>? Categories { get; set; }
-
-        public IFormFile? ImageFile { get; set; }
+        public object ImageFile { get; internal set; }
     }
 }

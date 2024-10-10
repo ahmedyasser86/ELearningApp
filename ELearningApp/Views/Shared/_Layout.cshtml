@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ELearningApp</title>
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <meta content="Free HTML Templates" name="keywords">
@@ -12,7 +13,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ELearningApp.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
-
+    
     <!-- Favicon -->
     <link href="img/favicon.ico" rel="icon">
 
@@ -39,13 +40,14 @@
 </head>
 
 <body>
+  
     <!-- Topbar Start -->
     <!-- Topbar End -->
     <!-- Navbar Start -->
     <div class="container-fluid p-0">
         <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-lg-5">
-            <a href="index.html" class="navbar-brand ml-lg-3">
-                <h1 class="m-0 text-uppercase text-primary"><i class="fa fa-book-reader mr-3"></i>Edukate</h1>
+            <a asp-area="" asp-controller="Courses" asp-action="Index" class="navbar-brand ml-lg-3">
+                <h1 class="m-0 text-uppercase text-primary"><i class="fa fa-book-reader mr-3"></i>ELearning TEAM</h1>
             </a>
             <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
@@ -58,35 +60,29 @@
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                         <div class="dropdown-menu m-0">
-                            <a href="detail.html" class="dropdown-item">Course Detail</a>
-                            <a href="feature.html" class="dropdown-item">Our Features</a>
-                            <a href="team.html" class="dropdown-item">Instructors</a>
-                            <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                            <a asp-area="" asp-controller="Courses" asp-action="Index" class="dropdown-item">Course Detail</a>
+                            <a asp-area="" asp-controller="UserCourses" asp-action="Index" class="dropdown-item">Our Features</a>
+                            <a asp-area="" asp-controller="Admin" asp-action="Index" class="dropdown-item">Instructors</a>
+                            <a asp-area="" asp-controller="Categories" asp-action="Index" class="dropdown-item">Categories</a>
+                          
                         </div>
                     </div>
-
-                    <!-- SEARCH STRAT-->
-                    <div class="input-group">
-                       @*  <div class="input-group-prepend">
-                            <button class="btn btn-outline-light bg-white text-body px-4 dropdown-toggle" type="button" data-toggle="dropdown"
-                                    aria-haspopup="true" aria-expanded="false">
-                                Courses
-                            </button>
-                            <div class="dropdown-menu">
-                                <a class="dropdown-item" href="#">Courses 1</a>
-                                <a class="dropdown-item" href="#">Courses 2</a>
-                                <a class="dropdown-item" href="#">Courses 3</a>
+                    @*                    تم ربط Search
+ *@                    <!-- SEARCH FORM START -->
+                    <form asp-controller="Courses" asp-action="Index" method="get">
+                        <div class="input-group">
+                            <input type="text" name="search" value="@ViewData["Search"]" class="form-control border-light" style="padding: 30px 25px;" placeholder="Keyword">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-secondary px-4 px-lg-5">Search</button>
                             </div>
-                        </div> *@
-                        <input type="text" class="form-control border-light" style="padding: 30px 25px;" placeholder="Keyword">
-                        <div class="input-group-append">
-                            <button class="btn btn-secondary px-4 px-lg-5">Search</button>
                         </div>
-                    </div>
+                    </form>
+                    <!-- SEARCH FORM END -->
                     <!-- SERACH END-->
                     @*  <a href="contact.html" class="nav-item nav-link">Contact</a>*@
+                    
                 </div>
-                <a href="" class="btn btn-primary py-2 px-4 d-none d-lg-block">Join Us</a>
+                <partial name="_LoginPartial" />
             </div>
         </nav>
     </div>
@@ -124,9 +120,8 @@
             <div class="row">
                 <div class="col-md-6 mb-5">
                     <a href="index.html" class="navbar-brand">
-                        <h1 class="mt-n2 text-uppercase text-white"><i class="fa fa-book-reader mr-3"></i>Edukate</h1>
+                        <h1 class="mt-n2 text-uppercase text-white"><i class="fa fa-book-reader mr-3"></i>ELearning TEAM</</h1>
                     </a>
-                    <p class="m-0">Accusam nonumy clita sed rebum kasd eirmod elitr. Ipsum ea lorem at et diam est, tempor rebum ipsum sit ea tempor stet et consetetur dolores. Justo stet diam ipsum lorem vero clita diam</p>
                 </div>
                 <div class="col-md-6 mb-5">
                     <h3 class="text-white mb-4">Newsletter</h3>
@@ -134,18 +129,19 @@
                         <div class="input-group">
                             <input type="text" class="form-control border-light" style="padding: 30px;" placeholder="Your Email Address">
                             <div class="input-group-append">
-                                <button class="btn btn-primary px-4">Sign Up</button>
+                                <a class="btn btn-primary px-4" asp-area="Identity" asp-page="/Account/Register">Sign Up</a>
                             </div>
                         </div>
                     </div>
                 </div>
+
             </div>
             <div class="row">
                 <div class="col-md-4 mb-5">
                     <h3 class="text-white mb-4">Get In Touch</h3>
-                    <p><i class="fa fa-map-marker-alt mr-2"></i>123 Street, New York, USA</p>
-                    <p><i class="fa fa-phone-alt mr-2"></i>+012 345 67890</p>
-                    <p><i class="fa fa-envelope mr-2"></i>info@example.com</p>
+                    <p><i class="fa fa-map-marker-alt mr-2"></i>123 Street, nasr caty, EG</p>
+                    <p><i class="fa fa-phone-alt mr-2"></i>+012000000000</p>
+                    <p><i class="fa fa-envelope mr-2"></i>admin@ELearning.com</p>
                     <div class="d-flex justify-content-start mt-4">
                         <a class="text-white mr-4" href="#"><i class="fab fa-2x fa-twitter"></i></a>
                         <a class="text-white mr-4" href="#"><i class="fab fa-2x fa-facebook-f"></i></a>
@@ -166,7 +162,7 @@
                 <div class="col-md-4 mb-5">
                     <h3 class="text-white mb-4">Quick Links</h3>
                     <div class="d-flex flex-column justify-content-start">
-                        <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Privacy Policy</a>
+                        <a class="text-white-50 mb-2" asp-area="" asp-controller="Home" asp-action="Privacy"><i class="fa fa-angle-right mr-2"></i>Privacy Policy</a>
                         <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Terms & Condition</a>
                         <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Regular FAQs</a>
                         <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Help & Support</a>
@@ -176,17 +172,18 @@
             </div>
         </div>
     </div>
+    
     <div class="container-fluid bg-dark text-white-50 border-top py-4" style="border-color: rgba(256, 256, 256, .1) !important;">
         <div class="container">
             <div class="row">
                 <div class="col-md-6 text-center text-md-left mb-3 mb-md-0">
                     <p class="m-0">
-                        Copyright &copy; <a class="text-white" href="#">Your Site Name</a>. All Rights Reserved.
+                        &copy; 2024 - ELearningApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                     </p>
                 </div>
                 <div class="col-md-6 text-center text-md-right">
                     <p class="m-0">
-                        Designed by <a class="text-white" href="https://htmlcodex.com">HTML Codex</a>
+                        Designed by <a class="text-white" href="#">ELearning Team</a>
                     </p>
                 </div>
             </div>
@@ -194,7 +191,7 @@
     </div>
     <!-- Footer End -->
     <!-- Back to Top -->
-    <a href="#" class="btn btn-lg btn-primary rounded-0 btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
 
 
     <!-- JavaScript Libraries -->
@@ -212,11 +209,7 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 
-    <script>
-        // Code to get the latest courses
-
-        // code to access the courses section
-    </script>
+   
 </body>
 
 </html>

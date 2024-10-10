@@ -130,7 +130,7 @@ namespace ELearningApp.Controllers
                     }
                     else
                     {
-                        iamgePath = await Ulitites.UploadFileAsync(courseViewModel.ImageFile, "img", courseViewModel.Course.Id.ToString() ?? "");
+                        iamgePath = await Ulitites.UploadFileAsync((IFormFile?)courseViewModel.ImageFile, "img", courseViewModel.Course.Id.ToString() ?? "");
                     }
 
                     if (course.Id == 0)

@@ -18,5 +18,9 @@ namespace ELearningApp.Controllers
         {
             return Json("");
         }
+        public IActionResult Privacy()
+        {
+            return View();
+        }
     }
 }
