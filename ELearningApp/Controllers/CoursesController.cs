@@ -63,6 +63,9 @@ namespace ELearningApp.Controllers
             {
                 Categories = cateogries.ToList(),
                 Course = new Course()
+                {
+                    Contents = []
+                }
             };
 
             return View("CourseView", model);
@@ -72,7 +75,7 @@ namespace ELearningApp.Controllers
         public async Task<ActionResult> EditCourse(int Id)
         {
             // Get Course
-            var course = await coursesDataHelper.GetWithIncludesAsync(Id.ToString(), m => m.Include(m => m.Category));
+            var course = await coursesDataHelper.GetWithIncludesAsync(Id.ToString(), m => m.Include(m => m.Category).Include(m => m.Contents));
 
             // Check if course exist
             if (course == null)
@@ -103,24 +106,38 @@ namespace ELearningApp.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> SaveData(Course course)
+        public async Task<ActionResult> SaveData(CourseViewModel courseViewModel)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid && courseViewModel.Course != null)
             {
                 try
                 {
                     // get user
                     var user = await userManager.GetUserAsync(User);
 
-                    if(user == null)
+                    var course = courseViewModel.Course;
+
+                    if (user == null)
                     {
                         return RedirectToAction("Index", new { error = "You have no premissions " });
+                    }
+
+                    // Upload Image
+                    string? iamgePath;
+                    if (courseViewModel.ImageFile == null)
+                    {
+                        iamgePath = course.ImagePath;
+                    }
+                    else
+                    {
+                        iamgePath = await Ulitites.UploadFileAsync(courseViewModel.ImageFile, "img", courseViewModel.Course.Id.ToString() ?? "");
                     }
 
                     if (course.Id == 0)
                     {
                         // Add instructor to course
                         course.InstructorId = user.Id;
+                        course.ImagePath = iamgePath;
 
                         // New Course
                         await coursesDataHelper.AddAsync(course);
@@ -147,17 +164,21 @@ namespace ELearningApp.Controllers
                         // Set new values
                         ObjectUpdater.UpdateValues(oldCourse, course);
 
+                        oldCourse.InstructorId = user.Id;
+                        oldCourse.ImagePath = iamgePath;
+
                         // Update db
-                        await coursesDataHelper.UpdateAsync(course);
+                        await coursesDataHelper.UpdateAsync(oldCourse);
                     }
                 }
                 catch
                 {
                     RedirectToAction("Index", new { error = "Failed to add course, please contact with admin" });
                 }
-            }
 
-            return RedirectToAction("Index", new { sucess = "Adding course done!." });
+                return RedirectToAction("Index", new { sucess = "Adding course done!." });
+            }
+            return RedirectToAction("Index", new { error = "Model Error." });
         }
 
         [Authorize(Roles = "Admin")]
@@ -181,7 +202,7 @@ namespace ELearningApp.Controllers
 
                 return RedirectToAction("Index", new { sucess = "Course Approved" });
             }
-            catch (Exception ex) 
+            catch (Exception ex)
             {
                 return RedirectToAction("Index", new { error = ex.Message });
             }

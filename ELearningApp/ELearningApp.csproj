@@ -10,12 +10,16 @@
   <ItemGroup>
     <Compile Remove="Areas\Admin\**" />
     <Compile Remove="Areas\Teacher\**" />
+    <Compile Remove="wwwroot\NewFolder\**" />
     <Content Remove="Areas\Admin\**" />
     <Content Remove="Areas\Teacher\**" />
+    <Content Remove="wwwroot\NewFolder\**" />
     <EmbeddedResource Remove="Areas\Admin\**" />
     <EmbeddedResource Remove="Areas\Teacher\**" />
+    <EmbeddedResource Remove="wwwroot\NewFolder\**" />
     <None Remove="Areas\Admin\**" />
     <None Remove="Areas\Teacher\**" />
+    <None Remove="wwwroot\NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -36,7 +40,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\JS\" />
     <Folder Include="wwwroot\lib\" />
-    <Folder Include="wwwroot\NewFolder\" />
   </ItemGroup>
 
   <ItemGroup>

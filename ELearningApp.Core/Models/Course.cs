@@ -13,7 +13,7 @@ namespace ELearningApp.Core.Models
         public int Id { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public CourseStatus Status { get; set; }
+        public CourseStatus Status { get; set; } = CourseStatus.Pending;
         public string? ImagePath { get; set; }
 
         public int CategoryId { get; set; }
@@ -22,7 +22,7 @@ namespace ELearningApp.Core.Models
         public string InstructorId { get; set; } = string.Empty;
         public ApplicationUser? Instructor { get; set; }
 
-        public ICollection<Content>? Contents { get; set; }
+        public List<Content>? Contents { get; set; }
         public ICollection<UserCourse>? Students { get; set; }
 
         [NotMapped]
