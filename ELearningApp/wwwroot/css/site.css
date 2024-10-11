@@ -9958,3 +9958,9 @@ h6,
 .testimonial-carousel .owl-nav .owl-prev:hover {
   background: #2878EB;
 }
+
+
+.nav-item dropdown 
+{
+    justify-content:flex-start
+}

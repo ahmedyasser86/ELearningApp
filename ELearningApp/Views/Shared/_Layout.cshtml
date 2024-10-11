@@ -53,7 +53,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
-                <div class="navbar-nav mx-auto py-0">
+                <div class="navbar-nav py-0">
                   @*  <a href="index.html" class="nav-item nav-link active">Home</a>
                     <a href="about.html" class="nav-item nav-link">About</a>
                     <a href="/courses/index" class="nav-item nav-link">Courses</a>*@
@@ -69,6 +69,7 @@
                     </div>
                     @*                    تم ربط Search
  *@                    <!-- SEARCH FORM START -->
+                    <div class="search-form p-lg-2">  
                     <form asp-controller="Courses" asp-action="Index" method="get">
                         <div class="input-group">
                             <input type="text" name="search" value="@ViewData["Search"]" class="form-control border-light" style="padding: 30px 25px;" placeholder="Keyword">
@@ -77,6 +78,7 @@
                             </div>
                         </div>
                     </form>
+                    </div>
                     <!-- SEARCH FORM END -->
                     <!-- SERACH END-->
                     @*  <a href="contact.html" class="nav-item nav-link">Contact</a>*@
