@@ -24,10 +24,15 @@ namespace ELearningApp.Controllers
         // عرض جميع المستخدمين
         public async Task<IActionResult> Index(int page = 1, int pagesize = 10, string search = "")
         {
+            return RedirectToAction($"UserManagement", new { page, pagesize, search });
+        }
+        
+        public async Task<IActionResult> UserManagement(int page = 1, int pagesize = 10, string search = "")
+        {
             PaginatedList<ApplicationUser> users;
             if (string.IsNullOrEmpty(search))
             {
-                users =  await usersDataHelper.GetPagedAsync(page, pagesize);
+                users = await usersDataHelper.GetPagedAsync(page, pagesize);
             }
             else
             {
