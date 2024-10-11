@@ -42,8 +42,8 @@ namespace ELearningApp.Service.DB.Migrations
             var adminUser = new IdentityUser
             {
                 Id = adminUserId,
-                UserName = "Admin",
-                NormalizedUserName = "ADMIN",
+                UserName = "admin@admin.com",
+                NormalizedUserName = "ADMIN@ADMIN.COM",
                 Email = "admin@admin.com",
                 NormalizedEmail = "ADMIN@ADMIN.COM",
                 EmailConfirmed = true,

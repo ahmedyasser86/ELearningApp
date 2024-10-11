@@ -100,10 +100,6 @@ namespace ELearningApp.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
 
-            [Required]
-            [Display(Name = "Full Name")]
-            public string UserName { get; set; }
-
             [Display(Name = "User Type")]
             [Required]
             public bool IsTeacher { get; set; }
