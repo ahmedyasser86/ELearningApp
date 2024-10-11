@@ -6,96 +6,130 @@
 @using ELearningApp.Core.Models
 @model PaginatedList<Category>
 
-<div class="d-block" style="overflow-x: auto; width: 100%;">
-    <table id="products" class="table table-bordered">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th style="width: 50px;"></th>
-                <th style="width: 50px;"></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in Model.Items)
-            {
-                <tr>
-                    <td>@product.Id</td>
-                    <td>@product.Name</td>
-                    <td><a class="btn btn-primary py-1 px-2" href="/@(ViewData["ControllerName"])/Edit/@product.Id"><i class="fa fa-pencil"></i></a></td>
-                    <td><a class="btn btn-danger py-1 px-2" href="/@(ViewData["ControllerName"])/Delete/@product.Id"><i class="fa fa-trash"></i></a></td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<!-- Contact Start -->
+<div class="container-fluid py-5">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <!-- عنوان الصفحة -->
+                    <div class="section-title position-relative">
+                        <h6 class="d-inline-block position-relative text-secondary text-uppercase pb-2">Category Management</h6>
+                        <h1 class="display-6">Manage Categories</h1>
+                    </div>
 
-    <div>
-        <!-- أزرار التنقل بين الصفحات -->
-        <nav aria-label="Page navigation">
-            <ul class="pagination justify-content-center">
-                <!-- زر الذهاب لأول صفحة -->
-                @if (Model.PageNumber > 1)
-                {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-pageNumber="1" asp-route-pageSize="@Model.PageSize">الأولى</a>
-                    </li>
-                }
-                else
-                {
-                    <li class="page-item disabled">
-                        <span class="page-link">الأولى</span>
-                    </li>
-                }
-                <!-- زر السابق -->
-                @if (Model.HasPreviousPage)
-                {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize">السابق</a>
-                    </li>
-                }
-                else
-                {
-                    <li class="page-item disabled">
-                        <span class="page-link">السابق</span>
-                    </li>
-                }
+                    <!-- الأزرار الخاصة بالإدارة -->
+                    <div>
+                        <!-- زر Course Management -->
+                        <a href="@Url.Action("CourseManagement", "Admin")" class="btn btn-primary btn-lg">Course Management</a>
 
-                <!-- عرض أرقام الصفحات -->
-                @{
-                    int startPage = Math.Max(1, Model.PageNumber - 2); // بدء نطاق الأرقام
-                    int endPage = Math.Min(Model.TotalPages, Model.PageNumber + 2); // نهاية نطاق الأرقام
-                }
+                        <!-- زر User Management -->
+                        <a href="@Url.Action("UserManagement", "Admin")" class="btn btn-secondary btn-lg ml-2">User Management</a>
 
-                @for (int i = startPage; i <= endPage; i++)
-                {
-                    <li class="page-item @(Model.PageNumber == i ? "active" : "")">
-                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize="@Model.PageSize">@i</a>
-                    </li>
-                }
+                        <!-- زر إضافة تصنيف -->
+                        <a href="@Url.Action("Add", "Categories")" class="btn btn-success btn-lg ml-2">Add Category</a>
+                    </div>
+                </div>
 
-                <!-- زر التالي -->
-                @if (Model.HasNextPage)
-                {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize">التالي</a>
-                    </li>
-                }
-                else
-                {
-                    <li class="page-item disabled">
-                        <span class="page-link">التالي</span>
-                    </li>
-                }
+                <!-- Categories Table -->
+                <div class="bg-light p-4 rounded">
+                    <table id="products" class="table table-striped mt-3">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th style="width: 50px;"></th>
+                                <th style="width: 50px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var product in Model.Items)
+                            {
+                                <tr>
+                                    <td>@product.Id</td>
+                                    <td>@product.Name</td>
+                                    <td><a class="btn btn-primary py-1 px-2" href="/@(ViewData["ControllerName"])/Edit/@product.Id"><i class="fa fa-pencil"></i></a></td>
+                                    <td><a class="btn btn-danger py-1 px-2" href="/@(ViewData["ControllerName"])/Delete/@product.Id"><i class="fa fa-trash"></i></a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
 
-                <!-- زر الذهاب لآخر صفحة -->
-                @if (Model.PageNumber < Model.TotalPages)
-                {
-                    <li class="page-item">
-                        <a class="page-link" asp-action="Index" asp-route-pageNumber="@Model.TotalPages" asp-route-pageSize="@Model.PageSize">الأخيرة</a>
+                <!-- Pagination -->
+                <nav aria-label="Page navigation" class="mt-4">
+                    <ul class="pagination justify-content-center">
+                        <!-- زر الذهاب لأول صفحة -->
+                        @if (Model.PageNumber > 1)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="1" asp-route-pageSize="@Model.PageSize">First</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">First</span>
+                            </li>
+                        }
 
-                    </li>
-                }
-            </ul>
-        </nav>
+                        <!-- زر السابق -->
+                        @if (Model.HasPreviousPage)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber - 1)" asp-route-pageSize="@Model.PageSize">Previous</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">Previous</span>
+                            </li>
+                        }
+
+                        <!-- عرض أرقام الصفحات -->
+                        @for (int i = Math.Max(1, Model.PageNumber - 2); i <= Math.Min(Model.TotalPages, Model.PageNumber + 2); i++)
+                        {
+                            <li class="page-item @(Model.PageNumber == i ? "active" : "")">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@i" asp-route-pageSize="@Model.PageSize">@i</a>
+                            </li>
+                        }
+
+                        <!-- زر التالي -->
+                        @if (Model.HasNextPage)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@(Model.PageNumber + 1)" asp-route-pageSize="@Model.PageSize">Next</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">Next</span>
+                            </li>
+                        }
+
+                        <!-- زر الذهاب لآخر صفحة -->
+                        @if (Model.PageNumber < Model.TotalPages)
+                        {
+                            <li class="page-item">
+                                <a class="page-link" asp-action="Index" asp-route-pageNumber="@Model.TotalPages" asp-route-pageSize="@Model.PageSize">Last</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item disabled">
+                                <span class="page-link">Last</span>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+
+            </div>
+        </div>
     </div>
 </div>
+<!-- Contact End -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
