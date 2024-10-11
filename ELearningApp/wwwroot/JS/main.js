@@ -135,3 +135,13 @@
     
 })(jQuery);
 
+
+// viewCoures
+
+function loadVideo(url) {
+    document.getElementById("course-video").src = url;
+    var lessons = document.querySelectorAll('.lesson-title');
+    lessons.forEach(lesson => lesson.classList.remove('active-lesson'));
+    event.target.classList.add('active-lesson');
+}
+
