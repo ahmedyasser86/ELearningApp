@@ -15,14 +15,16 @@ namespace ELearningApp.Controllers
     [Authorize(Roles = "Admin")]
     public class AdminController(ILogger<AdminController> logger,
         IDataHelper<ApplicationUser> usersDataHelper,
+        IDataHelper<Course> coursesDataHelper,
         UserManager<ApplicationUser> userManager) : Controller
     {
         private readonly ILogger<AdminController> _logger = logger;
         private readonly IDataHelper<ApplicationUser> usersDataHelper = usersDataHelper;
+        private readonly IDataHelper<Course> coursesDataHelper = coursesDataHelper;
         private readonly UserManager<ApplicationUser> userManager = userManager;
 
         // عرض جميع المستخدمين
-        public async Task<IActionResult> Index(int page = 1, int pagesize = 10, string search = "")
+        public IActionResult Index(int page = 1, int pagesize = 10, string search = "")
         {
             return RedirectToAction($"UserManagement", new { page, pagesize, search });
         }
@@ -44,7 +46,7 @@ namespace ELearningApp.Controllers
 
         // حذف مستخدم
         [HttpPost]
-        public async Task<IActionResult> Delete(string id)
+        public async Task<IActionResult> DeleteUser(string id)
         {
             var user = await userManager.FindByIdAsync(id);
             if (user == null)
@@ -77,6 +79,25 @@ namespace ELearningApp.Controllers
             }
 
             return RedirectToAction("Index", new { error = "Error making user admin" });
+        }
+
+        public async Task<IActionResult> CourseManagement(int page = 1, int pagesize = 10, string search = "")
+        {
+            PaginatedList<Course> courses;
+            if (string.IsNullOrEmpty(search))
+            {
+                courses = await coursesDataHelper.SearchPagedAsync(pagesize, pagesize, 
+                    m => m.Status == Core.enums.CourseStatus.Pending
+                    );
+            }
+            else
+            {
+                courses = await coursesDataHelper.SearchPagedAsync(1, 10, 
+                    m => m.Title.Contains(search) && m.Status == Core.enums.CourseStatus.Pending
+                    );
+            }
+
+            return View(courses);
         }
 
     }
