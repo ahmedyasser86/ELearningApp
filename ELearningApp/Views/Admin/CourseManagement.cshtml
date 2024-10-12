@@ -44,7 +44,7 @@
                                     <td>@course.Description</td>
                                     <td>@course.CategoryId</td>
                                     <td>
-                                        <a class="btn btn-success btn-sm" href="/Courses/ApproveCourse/@course.Id">Approve</a>
+                                        <a class="btn btn-success btn-sm" href="/Courses/AproveCourse/@course.Id">Approve</a>
                                         <a class="btn btn-info btn-sm" href="/Courses/Details/@course.Id">Details</a>
                                         <form method="post" action="/Courses/DeleteCourse/@course.Id" style="display:inline;">
                                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this course?');">Delete</button>

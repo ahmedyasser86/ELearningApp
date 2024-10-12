@@ -122,25 +122,20 @@ namespace ELearningApp.Controllers
                         return RedirectToAction("Index", new { error = "You have no premissions " });
                     }
 
-                    // Upload Image
-                    string? iamgePath;
-                    if (courseViewModel.ImageFile == null)
-                    {
-                        iamgePath = course.ImagePath;
-                    }
-                    else
-                    {
-                        iamgePath = await Ulitites.UploadFileAsync((IFormFile?)courseViewModel.ImageFile, "img", courseViewModel.Course.Id.ToString() ?? "");
-                    }
-
                     if (course.Id == 0)
                     {
                         // Add instructor to course
                         course.InstructorId = user.Id;
-                        course.ImagePath = iamgePath;
 
                         // New Course
                         await coursesDataHelper.AddAsync(course);
+
+                        // Upload Image
+                        var iamgePath = await Ulitites.UploadFileAsync(courseViewModel.ImageFile, "img", course.Id.ToString() ?? "");
+
+                        // Update Course
+                        course.ImagePath = iamgePath;
+                        await coursesDataHelper.UpdateAsync(course);
                     }
                     else
                     {
@@ -165,7 +160,12 @@ namespace ELearningApp.Controllers
                         ObjectUpdater.UpdateValues(oldCourse, course);
 
                         oldCourse.InstructorId = user.Id;
-                        oldCourse.ImagePath = iamgePath;
+                        if(courseViewModel.ImageFile != null)
+                        {
+                            // Upload Image
+                            var iamgePath = await Ulitites.UploadFileAsync(courseViewModel.ImageFile, "img", course.Id.ToString() ?? "");
+                            oldCourse.ImagePath = iamgePath;
+                        }
 
                         // Update db
                         await coursesDataHelper.UpdateAsync(oldCourse);

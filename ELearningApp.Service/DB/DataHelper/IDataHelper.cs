@@ -32,6 +32,7 @@ namespace ELearningApp.Service.DB.DataHelper
         Task<IEnumerable<T>> SearchAsync(Expression<Func<T, bool>> predicate);
         Task<PaginatedList<T>> SearchPagedAsync(int pageNumber, int pageSize, Expression<Func<T, bool>> predicate);
         Task<PaginatedList<T>> SearchPagedWithIncludesAsync(int pageNumber, int pageSize, Expression<Func<T, bool>> predicate, Func<QueryBuilder<T>, QueryBuilder<T>> queryBuilder);
+        Task<PaginatedList<T>> SearchPagedWithIncludesInOrderAsync<TKey>(int pageNumber, int pageSize, Expression<Func<T, bool>> predicate, Func<QueryBuilder<T>, QueryBuilder<T>> queryBuilder, bool IsDESC, Func<T, TKey> order);
         IEnumerable<dynamic> GetDistinctColumnValues(Func<T, dynamic> coulmns);
         Task<int> GetSequenceValue(string sequenceName);
     }

@@ -9,7 +9,7 @@
             if (!Directory.Exists(uploadDirctory))
                 Directory.CreateDirectory(uploadDirctory);
 
-            fileName = $"{fileName}.{file?.Name.Split('.').Last()}";
+            fileName = $"{fileName}.{file?.FileName.Split('.').Last()}";
 
             var filePath = Path.Combine(uploadDirctory, fileName);
 
@@ -18,7 +18,7 @@
                 await file.CopyToAsync(stream);
             }
 
-            return filePath;
+            return filePath.Replace($"{Directory.GetCurrentDirectory()}\\wwwroot", "");
         }
     }
 }

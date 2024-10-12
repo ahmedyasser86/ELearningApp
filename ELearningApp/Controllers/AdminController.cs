@@ -86,13 +86,15 @@ namespace ELearningApp.Controllers
             PaginatedList<Course> courses;
             if (string.IsNullOrEmpty(search))
             {
-                courses = await coursesDataHelper.SearchPagedAsync(pagesize, pagesize, 
+                courses = await coursesDataHelper.SearchPagedAsync(page, pagesize, 
                     m => m.Status == Core.enums.CourseStatus.Pending
                     );
+
+                var list = courses.Items.Where(m => m.Status == Core.enums.CourseStatus.Pending).ToList();
             }
             else
             {
-                courses = await coursesDataHelper.SearchPagedAsync(1, 10, 
+                courses = await coursesDataHelper.SearchPagedAsync(page, pagesize, 
                     m => m.Title.Contains(search) && m.Status == Core.enums.CourseStatus.Pending
                     );
             }

@@ -233,5 +233,23 @@ namespace ELearningApp.Service.DB.DataHelper
             context.Database.ExecuteSqlRaw($"set @result = next value for {sequenceName}", p);
             return (int)p.Value;
         }
+
+        public async Task<PaginatedList<T>> SearchPagedWithIncludesInOrderAsync<TKey>(int pageNumber, int pageSize, Expression<Func<T, bool>> predicate, Func<QueryBuilder<T>, QueryBuilder<T>> queryBuilder, bool IsDESC, Func<T, TKey> order)
+        {
+            var totalRecords = await _dbSet.Where(predicate).CountAsync();
+
+            IQueryable<T> query = queryBuilder(new QueryBuilder<T>(_dbSet.Where(predicate).Skip((pageNumber - 1) * pageSize).Take(pageSize))).Build();
+            List<T> items;
+            if (IsDESC)
+            {
+                items = query.OrderByDescending(order).ToList();
+            }
+            else
+            {
+                items = query.OrderBy(order).ToList();
+            }
+
+            return new PaginatedList<T>(items, totalRecords, pageNumber, pageSize);
+        }
     }
 }

@@ -30,13 +30,7 @@
     <!-- Customized Bootstrap Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
-    <script>
-        // Code to get categories
 
-        // Code to access Headers => categories in the Headers
-
-        // Code to access Footer => categories in the Footer
-    </script>
 </head>
 
 <body>
@@ -47,47 +41,40 @@
     <div class="container-fluid p-0">
         <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-lg-5">
             <a asp-area="" asp-controller="home" asp-action="Index" class="navbar-brand ml-lg-3">
-                <h1 class="m-0 text-uppercase text-primary"><i class="fa fa-book-reader mr-3"></i>ELearning TEAM</h1>
+                <!-- تصغير حجم اللوجو باستخدام Bootstrap -->
+                <h2 class="m-0 text-uppercase text-primary h4"><i class="fa fa-book-reader mr-3"></i><span class="my-auto">ELearning TEAM</span></h2>
             </a>
             <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
                 <div class="navbar-nav py-0">
-                  @*  <a href="index.html" class="nav-item nav-link active">Home</a>
-                    <a href="about.html" class="nav-item nav-link">About</a>
-                    <a href="/courses/index" class="nav-item nav-link">Courses</a>*@
                     <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-                        <div class="dropdown-menu m-0">
-                            <a asp-area="" asp-controller="Courses" asp-action="Index" class="dropdown-item">Course Detail</a>
-                            <a asp-area="" asp-controller="UserCourses" asp-action="Index" class="dropdown-item">Our Features</a>
-                            <a asp-area="" asp-controller="Admin" asp-action="Index" class="dropdown-item">Instructors</a>
-                            <a asp-area="" asp-controller="Categories" asp-action="Index" class="dropdown-item">Categories</a>
-                          
+                        <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Categories</a>
+                        <div class="dropdown-menu m-0" id="categories-navbar">
+                            <!-- سيتم ملء الفئات هنا بواسطة JavaScript -->
                         </div>
                     </div>
-                    @*                    تم ربط Search
- *@                    <!-- SEARCH FORM START -->
-                    <div class="search-form p-lg-2">  
-                    <form asp-controller="Courses" asp-action="Index" method="get">
-                        <div class="input-group">
-                            <input type="text" name="search" value="@ViewData["Search"]" class="form-control border-light" style="padding: 30px 25px;" placeholder="Keyword">
-                            <div class="input-group-append">
-                                <button type="submit" class="btn btn-secondary px-4 px-lg-5">Search</button>
-                            </div>
-                        </div>
-                    </form>
-                    </div>
-                    <!-- SEARCH FORM END -->
-                    <!-- SERACH END-->
-                    @*  <a href="contact.html" class="nav-item nav-link">Contact</a>*@
-                    
                 </div>
+
+                <!-- Form البحث في منتصف الـ Navbar -->
+                <form asp-controller="Courses" asp-action="Index" method="get" class="form-inline mx-auto my-2 my-lg-0">
+                    <div class="input-group">
+                        <!-- تكبير حقل البحث باستخدام فئة form-control-lg -->
+                        <input type="text" name="search" value="@ViewData["Search"]" class="form-control form-control-lg border-light" placeholder="Search for anything" aria-label="Search">
+                        <div class="input-group-append">
+                            <button type="submit" class="btn btn-secondary btn-lg"><i class="fa fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- جزء تسجيل الدخول -->
                 <partial name="_LoginPartial" />
             </div>
         </nav>
     </div>
+
+
     <!-- Navbar End -->
     
 
@@ -153,12 +140,8 @@
                 </div>
                 <div class="col-md-4 mb-5">
                     <h3 class="text-white mb-4">Our Courses</h3>
-                    <div class="d-flex flex-column justify-content-start">
-                        <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Web Design</a>
-                        <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Apps Design</a>
-                        <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Marketing</a>
-                        <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Research</a>
-                        <a class="text-white-50" href="#"><i class="fa fa-angle-right mr-2"></i>SEO</a>
+                    <div class="d-flex flex-column justify-content-start" id="categories-footer">
+                        <!-- سيتم ملء الفئات هنا بواسطة JavaScript -->
                     </div>
                 </div>
                 <div class="col-md-4 mb-5">
@@ -210,6 +193,33 @@
     @await RenderSectionAsync("Scripts", required: false)
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script>
+        $(document).ready(function () {
+            // استدعاء Ajax لجلب الفئات من الـ Controller
+            $.ajax({
+                url: '@Url.Action("GetCategories", "Home")', // استدعاء الـ Action الذي يعيد قائمة الفئات
+                method: 'GET',
+                success: function (data) {
+                    // ملء القائمة في الـ Navbar
+                    let navbarHtml = '';
+                    data.forEach(function (category) {
+                        navbarHtml += `<a class="dropdown-item" href="/courses/index?categoryId=${category.id}">${category.name}</a>`;
+                    });
+                    $('#categories-navbar').html(navbarHtml);
+
+                    // ملء القائمة في الـ Footer
+                    let footerHtml = '';
+                    data.forEach(function (category) {
+                        footerHtml += `<a class="text-white-50 mb-2" href="/courses/index?categoryId=${category.id}"><i class="fa fa-angle-right mr-2"></i>${category.name}</a>`;
+                    });
+                    $('#categories-footer').html(footerHtml);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error fetching categories:', error);
+                }
+            });
+        });
+    </script>
 
    
 </body>
