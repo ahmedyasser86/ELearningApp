@@ -1,0 +1,102 @@
+﻿@model ELearningApp.ViewModels.Contents.ContentViewModel
+
+<div class="row">
+    <!-- Sidebar (Lesson Titles) -->
+    <aside class="col-md-3 sidebar">
+        <h4 class="text-center">Course Lessons</h4>
+
+        @foreach (var item in Model.Contents ?? [])
+        {
+            if (item.Id == Model.Content?.Id)
+            {
+                <a class="btn lesson-title btn-primary" href="#">@item.Title</a>
+            }
+            else
+            {
+                if (item.IsWatched)
+                {
+                    <a class="btn lesson-title" href="@($"Watch?courseId={item.CourseId}&contentId={item.Id}")">@item.Title <span class="bg-black bg-opacity-25">✔️</span></a>
+                }
+                else
+                {
+                    <a class="btn lesson-title" href="@($"Watch?courseId={item.CourseId}&contentId={item.Id}")">@item.Title</a>
+                }
+            }
+        }
+    </aside>
+
+    <!-- Main Content -->
+    <main class="col-md-9 main-content">
+        <h1>@Model.Content?.Title</h1>
+        <div class="video-container">
+            @if (Model.Content?.ContentType == ELearningApp.Core.enums.ContentType.Video)
+            {
+                var url = Model.Content.Body?.Split('&')[0].Split("watch?v=").Last();
+                url = $"https://www.youtube.com/embed/{url}";
+
+                <iframe id="course-video" src="@url" frameborder="0" allowfullscreen></iframe>
+            }
+            else
+            {
+                @Html.Raw(Model.Content?.Body)
+            }
+        </div>
+
+        <!-- Controls for Next/Back -->
+        <div class="controls d-flex justify-content-between mt-3">
+            @if(Model.PreviousContentId != null)
+            {
+                <a id="prevBtn" href="@($"Watch?courseId={Model.Content?.CourseId}&contentId={Model.PreviousContentId}")" class="btn btn-primary">Previous</a>
+            }
+            @if(Model.NextContentId != null)
+            {
+                <a id="nextBtn" href="@($"Watch?courseId={Model.Content?.CourseId}&contentId={Model.NextContentId}")" class="btn btn-primary">Next</a>
+            }
+            
+        </div>
+    </main>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            console.log("Page fully loaded");
+
+            var iframe = document.getElementById("course-video");
+            var hasBeenWatched = false; // متغير لتتبع حالة إرسال الطلب
+
+            if (iframe) {
+                iframe.addEventListener("mouseover", function () {
+                    // التأكد من أن الطلب لم يتم إرساله من قبل
+                    if (!hasBeenWatched) {
+                        console.log("Iframe clicked, starting timer...");
+
+                        // بدء العداد لمدة 10 ثوانٍ
+                        setTimeout(function () {
+                            // التأكد من أن الطلب يتم إرساله مرة واحدة فقط
+                            if (!hasBeenWatched) {
+                                hasBeenWatched = true; // تحديث الحالة بعد إرسال الطلب
+
+                                var contentId = @Model.Content.Id;
+                                var userCourseId = @Model.UserCourseId;
+
+                                fetch(`/usercourses/MarkAsWatched?contentId=${contentId}&userCourseId=${userCourseId}`, {
+                                    method: 'POST'
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        console.log('Marked as watched:', data);
+                                    })
+                                    .catch(error => {
+                                        console.error('Error marking as watched:', error);
+                                    });
+                            }
+                        }, 10000);  // الانتظار لمدة 10 ثوانٍ
+                    }
+                });
+            } else {
+                console.error("Iframe not found");
+            }
+        });
+    </script>
+}

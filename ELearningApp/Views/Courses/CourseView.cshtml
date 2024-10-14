@@ -46,6 +46,8 @@
                 <div class="contact-form">
                     <form asp-action="SaveData" asp-controller="Courses" enctype="multipart/form-data" method="post">
                         <input type="hidden" asp-for="Course.Id" />
+                        <input type="hidden" asp-for="Course.ImagePath" />
+                        <input type="hidden" asp-for="Course.Status" />
 
                         <div class="row">
                             <div class="col-6 form-group">
@@ -79,6 +81,7 @@
                                     for (var i = 0; i < Model.Course.Contents.Count; i++)
                                     {
                                         <div class="content-card border p-3 mb-3">
+                                            <input type="hidden" asp-for="Course.Contents[i].Id" /> <!-- Hidden Field for Content ID -->
                                             <div class="form-group">
                                                 <label>Title</label>
                                                 <input type="text" class="form-control" asp-for="Course.Contents[i].Title" />
@@ -94,9 +97,9 @@
                                             <div class="form-group">
                                                 <label>Type</label>
                                                 <select class="form-control" asp-for="Course.Contents[i].ContentType">
-                                                    <option value="Video">Video</option>
-                                                    <option value="Article">Article</option>
-                                                    <option value="Quiz">Quiz</option>
+                                                    <option value="0">Video</option>
+                                                    <option value="1">Article</option>
+                                                    <option value="2">Quiz</option>
                                                 </select>
                                             </div>
                                             <div class="form-group">
@@ -123,7 +126,7 @@
 <!-- Course Form End -->
 
 <script>
-    let contentIndex = @Model.Course.Contents?.Count; // To track the index of contents
+    let contentIndex = @Model.Course.Contents?.Count || 0; // To track the index of contents
 
     document.getElementById('addContentBtn').addEventListener('click', function () {
         const contentsSection = document.getElementById('contentsSection');
@@ -131,6 +134,7 @@
         newContentCard.className = 'content-card border p-3 mb-3';
 
         newContentCard.innerHTML = `
+                <input type="hidden" name="Course.Contents[${contentIndex}].Id" value="0" /> <!-- Hidden Field for New Content ID -->
                 <div class="form-group">
                     <label>Title</label>
                     <input type="text" name="Course.Contents[${contentIndex}].Title" class="form-control" />
@@ -146,9 +150,9 @@
                 <div class="form-group">
                     <label>Type</label>
                     <select name="Course.Contents[${contentIndex}].ContentType" class="form-control contentTypeSelect">
-                        <option value="Video">Video</option>
-                        <option value="Article">Article</option>
-                        <option value="Quiz">Quiz</option>
+                        <option value="0">Video</option>
+                        <option value="1">Article</option>
+                        <option value="2">Quiz</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -186,5 +190,4 @@
         }
         contentCard.remove();
     }
-
 </script>

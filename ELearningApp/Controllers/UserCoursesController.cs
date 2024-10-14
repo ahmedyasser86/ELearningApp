@@ -32,9 +32,8 @@ namespace ELearningApp.Controllers
                 m => m.ApplicationUserId == userId, // Search by User Id
                 m => m.Include(m => m.Course) // Include Course data to get name, instructor name, category etc
                 .ThenInclude(m => ((Course)m).Instructor) // to get instructor data like Name
-                .Include(m => m.Course).ThenInclude(m => ((Course)m).Category) // to get categoryName
                 .Include(m => m.Course).ThenInclude(m => ((Course)m).Contents) // to get course contents
-                .Include(m => m.Progress) // To get user progress
+                .Include(m => m.Progresses) // To get user progress
                 );
 
             return View(userCourses);
@@ -49,9 +48,14 @@ namespace ELearningApp.Controllers
             var userCourse = (await userCoursesDataHelper.SearchPagedWithIncludesAsync(
                 1, 1,
                 m => m.ApplicationUserId == userId && m.CourseId == courseId,
-                m => m.Include(m => m.Course).ThenInclude(m => ((Course)m).Contents) // to get course contents
-                .Include(m => m.Progress).ThenInclude(m => ((UserProgress)m).Content) // To get user progress
+                m => m.Include(m => m.Course).ThenInclude(m => ((Course)m).Contents)
                 )).Items.FirstOrDefault();
+
+            // UserProgress
+            var userProgress = (await userProgressDataHelper.SearchPagedAsync(
+                1, int.MaxValue,
+                m => m.UserCourseId == userCourse.Id
+                )).Items;
 
             if(userCourse == null)
             {
@@ -61,11 +65,8 @@ namespace ELearningApp.Controllers
             Content? content;
             if(contentId == null)
             {
-                // Get the next content
-                var maxWatchedContentOrder = userCourse.Progresses?.Max(m => m.Content?.OrderNumber);
-
-                // Get nex content
-                content = userCourse.Course?.Contents?.Where(m => m.OrderNumber > maxWatchedContentOrder)
+                content = userCourse.Course?.Contents?
+                    .Where(m => !userProgress.Any(p => p.ContentId == m.Id))
                     .OrderBy(m => m.OrderNumber).FirstOrDefault();
             }
             else
@@ -84,6 +85,15 @@ namespace ELearningApp.Controllers
                     return RedirectToAction("Index", new { error = "Somthing error Happend" });
             }
 
+            // Mark watched content as watched
+            foreach (var item in userCourse.Course?.Contents ?? [])
+            {
+                if(userProgress.Any(m => m.ContentId == item.Id))
+                {
+                    item.IsWatched = true;
+                }
+            }
+
             var viewModel = new ContentViewModel
             {
                 Content = content,
@@ -92,6 +102,7 @@ namespace ELearningApp.Controllers
                     .OrderBy(m => m.OrderNumber).FirstOrDefault()?.Id,
                 PreviousContentId = userCourse.Course?.Contents?.Where(m => m.OrderNumber < content.OrderNumber)
                     .OrderByDescending(m => m.OrderNumber).FirstOrDefault()?.Id,
+                UserCourseId = userCourse.Id
             };
 
             return View(viewModel);
@@ -148,7 +159,7 @@ namespace ELearningApp.Controllers
                 var userCourse = await userCoursesDataHelper.SearchAsync(m => m.ApplicationUserId == userId && m.CourseId == courseId);
                 if (userCourse.Any())
                 {
-                    return RedirectToAction($"Watch?courseId={courseId}");
+                    return RedirectToAction($"Watch", new { courseId });
                 }
 
                 // Enroll
@@ -159,7 +170,7 @@ namespace ELearningApp.Controllers
                     EnrollDate = DateTime.Now,
                 });
 
-                return RedirectToAction($"Watch?courseId={courseId}");
+                return RedirectToAction($"Watch", new { courseId });
             }
             catch (Exception)
             {
@@ -187,6 +198,11 @@ namespace ELearningApp.Controllers
             {
                 return RedirectToAction("Index", new { error = ex.Message });
             }
+        }
+
+        public IActionResult Index2()
+        {
+            return View();
         }
     }
 }

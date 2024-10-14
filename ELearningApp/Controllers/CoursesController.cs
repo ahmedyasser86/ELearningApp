@@ -108,7 +108,7 @@ namespace ELearningApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> SaveData(CourseViewModel courseViewModel)
         {
-            if (ModelState.IsValid && courseViewModel.Course != null)
+            if (courseViewModel.Course != null)
             {
                 try
                 {
@@ -226,6 +226,14 @@ namespace ELearningApp.Controllers
             {
                 return RedirectToAction("Index", new { error = "Something error happend" });
             }
+        }
+
+        public async Task<IActionResult> CourseDetails(int courseId)
+        {
+            var course = await coursesDataHelper.GetWithIncludesAsync(courseId.ToString(),
+                m => m.Include(m => m.Instructor).Include(m => m.Contents).Include(m => m.Category));
+
+            return View(course);
         }
     }
 }

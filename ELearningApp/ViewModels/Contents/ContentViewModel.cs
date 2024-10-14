@@ -9,5 +9,7 @@ namespace ELearningApp.ViewModels.Contents
 
         public int? NextContentId { get; set; }
         public int? PreviousContentId { get; set; }
+
+        public int UserCourseId { get; set; }
     }
 }

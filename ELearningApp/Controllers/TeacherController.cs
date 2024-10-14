@@ -24,5 +24,60 @@ namespace ELearningApp.Controllers
 
             return View(courses);
         }
+
+        public async Task<IActionResult> DeleteCourse(int? id)
+        {
+            var userId = (await userManager.GetUserAsync(User))?.Id;
+
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var course = await coursesDataHelper.GetByIdAsync(id.Value.ToString());
+
+            if (course == null || course.InstructorId != userId)
+            {
+                return NotFound();
+            }
+
+            else
+            {
+                try
+                {
+                    await coursesDataHelper.DeleteAsync(id.Value.ToString());
+                }
+                catch (Exception)
+                {
+                    return RedirectToAction("Index", new { error = "failed to remove, contact admin" });
+                }
+            }
+
+            return View(course);
+        }
+
+        public async Task<IActionResult> ToggleVisbility(int id)
+        {
+            var userId = (await userManager.GetUserAsync(User))?.Id;
+
+            var course = await coursesDataHelper.GetByIdAsync(id.ToString());
+            if (course == null || userId != course.InstructorId)
+            {
+                return RedirectToAction("Index", new { error = "Course not found" });
+            }
+
+            if (course.Status == Core.enums.CourseStatus.Visible)
+                course.Status = Core.enums.CourseStatus.Hidden;
+            else if(course.Status == Core.enums.CourseStatus.Hidden)
+                course.Status = Core.enums.CourseStatus.Visible;
+            else
+            {
+                return RedirectToAction("Index", new { error = "something wrong happend" });
+            }
+
+            await coursesDataHelper.UpdateAsync(course);
+
+            return RedirectToAction("Index", new { sucess = "Toggle Visibility Done" });
+        }
     }
 }
