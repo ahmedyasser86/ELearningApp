@@ -1,6 +1,7 @@
 ﻿using ELearningApp.Core.enums;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -11,11 +12,15 @@ namespace ELearningApp.Core.Models
     public class Course
     {
         public int Id { get; set; }
+
+        [Required]
         public string Title { get; set; } = string.Empty;
+        [Required]
         public string Description { get; set; } = string.Empty;
         public CourseStatus Status { get; set; } = CourseStatus.Pending;
         public string? ImagePath { get; set; }
 
+        [Required]
         public int CategoryId { get; set; }
         public Category? Category { get; set; }
 
