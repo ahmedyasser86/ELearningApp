@@ -32,7 +32,9 @@ namespace ELearningApp.Controllers
                     m => m.CategoryId == (categoryId == null ? m.CategoryId : categoryId)
                     // searching if there is
                     && (m.Title.Contains(search ?? "") || (m.Instructor != null && m.Instructor.UserName != null && m.Instructor.UserName.Contains(search ?? ""))
-                    || m.Description.Contains(search ?? "")),
+                    || m.Description.Contains(search ?? ""))
+                    // Get Only Showen Courses
+                    && m.Status == Core.enums.CourseStatus.Visible,
                     // )
                     // Includes
                     m => m.Include(m => m.Contents).Include(m => m.Category).Include(m => m.Instructor)
@@ -176,7 +178,7 @@ namespace ELearningApp.Controllers
                     RedirectToAction("Index", new { error = "Failed to add course, please contact with admin" });
                 }
 
-                return RedirectToAction("Index", new { sucess = "Adding course done!." });
+                return RedirectToAction("Index", new { success = "Adding course done!." });
             }
             return RedirectToAction("Index", new { error = "Model Error." });
         }
@@ -200,7 +202,7 @@ namespace ELearningApp.Controllers
                 // Update db
                 await coursesDataHelper.UpdateAsync(course);
 
-                return RedirectToAction("Index", new { sucess = "Course Approved" });
+                return RedirectToAction("Index", new { success = "Course Approved" });
             }
             catch (Exception ex)
             {
@@ -220,7 +222,7 @@ namespace ELearningApp.Controllers
             if (course != null && user != null && (User.IsInRole("Admin") || course.InstructorId == user.Id))
             {
                 await coursesDataHelper.DeleteAsync(Id.ToString());
-                return RedirectToAction("Index", new { sucess = "Deleted Successfuly" });
+                return RedirectToAction("Index", new { success = "Deleted Successfuly" });
             }
             else
             {

@@ -96,7 +96,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Type</label>
-                                                <select class="form-control" asp-for="Course.Contents[i].ContentType">
+                                                <select class="form-control contentTypeSelect" asp-for="Course.Contents[i].ContentType">
                                                     <option value="0">Video</option>
                                                     <option value="1">Article</option>
                                                     <option value="2">Quiz</option>
@@ -104,7 +104,7 @@
                                             </div>
                                             <div class="form-group">
                                                 <label>Body</label>
-                                                <textarea class="form-control" asp-for="Course.Contents[@i].Body" rows="2"></textarea>
+                                                <textarea class="form-control body-field" asp-for="Course.Contents[@i].Body" rows="2"></textarea>
                                             </div>
                                             <button type="button" class="btn btn-danger" onclick="removeContent(this)">Remove Content</button>
                                         </div>
@@ -125,8 +125,26 @@
 </div>
 <!-- Course Form End -->
 
+<script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
 <script>
     let contentIndex = @Model.Course.Contents?.Count || 0; // To track the index of contents
+
+    document.addEventListener("DOMContentLoaded", function () {
+        // تفعيل CKEditor للمحتويات المحملة مسبقًا
+        document.querySelectorAll('.contentTypeSelect').forEach(function (selectElement) {
+            const bodyField = selectElement.closest('.content-card').querySelector('.body-field');
+            if (selectElement.value === "1") { // إذا كان Article
+                CKEDITOR.replace(bodyField);
+            }
+            selectElement.addEventListener('change', function () {
+                if (this.value === "1") {
+                    CKEDITOR.replace(bodyField);
+                } else if (CKEDITOR.instances[bodyField.name]) {
+                    CKEDITOR.instances[bodyField.name].destroy(true);
+                }
+            });
+        });
+    });
 
     document.getElementById('addContentBtn').addEventListener('click', function () {
         const contentsSection = document.getElementById('contentsSection');
@@ -134,59 +152,55 @@
         newContentCard.className = 'content-card border p-3 mb-3';
 
         newContentCard.innerHTML = `
-                <input type="hidden" name="Course.Contents[${contentIndex}].Id" value="0" /> <!-- Hidden Field for New Content ID -->
-                <div class="form-group">
-                    <label>Title</label>
-                    <input type="text" name="Course.Contents[${contentIndex}].Title" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label>Duration</label>
-                    <input type="number" name="Course.Contents[${contentIndex}].Duration" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label>Order</label>
-                    <input type="number" name="Course.Contents[${contentIndex}].OrderNumber" class="form-control" />
-                </div>
-                <div class="form-group">
-                    <label>Type</label>
-                    <select name="Course.Contents[${contentIndex}].ContentType" class="form-control contentTypeSelect">
-                        <option value="0">Video</option>
-                        <option value="1">Article</option>
-                        <option value="2">Quiz</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Body</label>
-                    <textarea name="Course.Contents[${contentIndex}].Body" class="form-control body-field" rows="2"></textarea>
-                </div>
-                <button type="button" class="btn btn-danger" onclick="removeContent(this)">Remove Content</button>
-            `;
+                    <input type="hidden" name="Course.Contents[${contentIndex}].Id" value="0" />
+                    <div class="form-group">
+                        <label>Title</label>
+                        <input type="text" name="Course.Contents[${contentIndex}].Title" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Duration</label>
+                        <input type="number" name="Course.Contents[${contentIndex}].Duration" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Order</label>
+                        <input type="number" name="Course.Contents[${contentIndex}].OrderNumber" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select name="Course.Contents[${contentIndex}].ContentType" class="form-control contentTypeSelect">
+                            <option value="0">Video</option>
+                            <option value="1">Article</option>
+                            <option value="2">Quiz</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Body</label>
+                        <textarea name="Course.Contents[${contentIndex}].Body" class="form-control body-field" rows="2"></textarea>
+                    </div>
+                    <button type="button" class="btn btn-danger" onclick="removeContent(this)">Remove Content</button>
+                `;
 
         contentsSection.appendChild(newContentCard);
 
-        // Handle content type change to enable CKEditor for Text type
+        // تفعيل CKEditor إذا تم اختيار Article
         const contentTypeSelect = newContentCard.querySelector('.contentTypeSelect');
         contentTypeSelect.addEventListener('change', function () {
             const bodyField = newContentCard.querySelector('.body-field');
-            if (this.value === 'Article') {
-                // Initialize CKEditor for body field
+            if (this.value === "1") {
                 CKEDITOR.replace(bodyField);
-            } else {
-                // Destroy CKEditor if switching away from Text
-                if (CKEDITOR.instances[bodyField.name]) {
-                    CKEDITOR.instances[bodyField.name].destroy(true);
-                }
+            } else if (CKEDITOR.instances[bodyField.name]) {
+                CKEDITOR.instances[bodyField.name].destroy(true);
             }
         });
 
-        contentIndex++; // Increment the index for the next content
+        contentIndex++;
     });
 
     function removeContent(button) {
         const contentCard = button.closest('.content-card');
         const bodyField = contentCard.querySelector('.body-field');
         if (CKEDITOR.instances[bodyField.name]) {
-            CKEDITOR.instances[bodyField.name].destroy(true); // Destroy CKEditor instance if exists
+            CKEDITOR.instances[bodyField.name].destroy(true); // إزالة CKEditor إذا كان موجودًا
         }
         contentCard.remove();
     }

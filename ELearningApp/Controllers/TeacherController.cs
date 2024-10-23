@@ -77,7 +77,7 @@ namespace ELearningApp.Controllers
 
             await coursesDataHelper.UpdateAsync(course);
 
-            return RedirectToAction("Index", new { sucess = "Toggle Visibility Done" });
+            return RedirectToAction("Index", new { success = "Toggle Visibility Done" });
         }
     }
 }
